@@ -16,13 +16,24 @@ class MyTopo( Topo ):
 
         
         client1 = self.addHost('client1')
+        client1.cmd('ifconfig client1-eth0 inet 1.1.1.3/30')
+
         client2 = self.addHost('client2')
+        client2.cmd('ifconfig client2-eth0 inet 2.2.2.3/30')
+
         client3 = self.addHost('client3')
+        client3.cmd('ifconfig client3-eth0 inet 3.3.3.3/30')
 
         
         server1 = self.addHost('server1')
+        client1.cmd('ifconfig client1-eth0 inet 1.1.1.2/30')
+        
         server2 = self.addHost('server2')
+        server2.cmd('ifconfig server2-eth0 inet 2.2.2.2/30')
+        
         server3 = self.addHost('server3')
+        server3.cmd('ifconfig server3-eth0 inet 3.3.3.2/30')
+
         # Add links
         self.addLink( client1, s1 )
         self.addLink( server1, s1 )
