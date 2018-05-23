@@ -15,14 +15,14 @@ class MyTopo( Topo ):
         s3 = self.addSwitch('s3', protocols='OpenFlow10')
 
         
-        client1 = self.addHost('client1', ip='1.1.1.3/30',defaultRoute=None )
-        client2 = self.addHost('client2', ip='2.2.2.3/30',defaultRoute=None )
-        client3 = self.addHost('client3', ip='3.3.3.3/30',defaultRoute=None )
+        client1 = self.addHost('client1', ip='1.1.1.3/30',defaultRoute='via 1.1.1.1' )
+        client2 = self.addHost('client2', ip='2.2.2.3/30',defaultRoute='via 2.2.2.1' )
+        client3 = self.addHost('client3', ip='3.3.3.3/30',defaultRoute='via 3.3.3.1' )
 
         
-        server1 = self.addHost('server1', ip='1.1.1.2/30',defaultRoute=None )
-        server2 = self.addHost('server2', ip='2.2.2.2/30',defaultRoute=None )
-        server3 = self.addHost('server3', ip='3.3.3.2/30',defaultRoute=None )
+        server1 = self.addHost('server1', ip='1.1.1.2/30',defaultRoute='via 1.1.1.1' )
+        server2 = self.addHost('server2', ip='2.2.2.2/30',defaultRoute='via 2.2.2.1' )
+        server3 = self.addHost('server3', ip='3.3.3.2/30',defaultRoute='via 3.3.3.1' )
         # Add links
         self.addLink( client1, s1 )
         self.addLink( server1, s1 )
