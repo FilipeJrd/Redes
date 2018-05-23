@@ -10,9 +10,9 @@ class MyTopo( Topo ):
         # Initialize topology
         Topo.__init__( self )
 
-        s1 = self.addSwitch('s1', protocols='OpenFlow10')
-        s2 = self.addSwitch('s2', protocols='OpenFlow10')
-        s3 = self.addSwitch('s3', protocols='OpenFlow10')
+        s1 = self.addSwitch('s1', protocols='OpenFlow13')
+        s2 = self.addSwitch('s2', protocols='OpenFlow13')
+        s3 = self.addSwitch('s3', protocols='OpenFlow13')
 
         
         client1 = self.addHost('client1', ip='1.1.1.3/30',defaultRoute='via 1.1.1.1' )
