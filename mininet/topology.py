@@ -1,6 +1,5 @@
 
 from mininet.topo import Topo
-from mininet.node import OVSKernelSwitch, UserSwitch
 
 class MyTopo( Topo ):
     "Simple topology example."
@@ -11,9 +10,9 @@ class MyTopo( Topo ):
         # Initialize topology
         Topo.__init__( self )
 
-        s1 = self.addSwitch('s1', protocols='OpenFlow13', cls=OVSKernelSwitch)
-        s2 = self.addSwitch('s2', protocols='OpenFlow13', cls=OVSKernelSwitch)
-        s3 = self.addSwitch('s3', protocols='OpenFlow13', cls=OVSKernelSwitch)
+        s1 = self.addSwitch('s1', protocols='OpenFlow10')
+        s2 = self.addSwitch('s2', protocols='OpenFlow10')
+        s3 = self.addSwitch('s3', protocols='OpenFlow10')
 
         
         client1 = self.addHost('client1', ip='1.1.1.3/30',defaultRoute='via 1.1.1.1' )
