@@ -1,5 +1,9 @@
 
 from mininet.topo import Topo
+from mininet.net import Mininet
+from mininet.node import CPULimitedHost
+from mininet.link import TCLink
+from mininet.log import setLogLevel
 
 class MyTopo( Topo ):
     "Simple topology example."
@@ -39,4 +43,11 @@ class MyTopo( Topo ):
         self.addLink( s2, s3, bw=0.24 )
         self.addLink( s3, s1, bw=0.24 )
 
-topos = { 'mytopo': ( lambda: MyTopo() ) }
+def createTopo():
+    topo = MyTopo()
+    net = Mininet( topo=topo,host=CPULimitedHost, link=TCLink )
+    net.start()
+
+if __name__ == '__main__':
+    setLogLevel('info')
+    createTopo()
