@@ -24,18 +24,19 @@ class MyTopo( Topo ):
         server2 = self.addHost('server2', ip='2.2.2.2/30',defaultRoute='via 2.2.2.1' )
         server3 = self.addHost('server3', ip='3.3.3.2/30',defaultRoute='via 3.3.3.1' )
         # Add links
-        self.addLink( client1, s1 )
-        self.addLink( server1, s1 )
+        # 30Kbytes = 0.24 Mbits
+        self.addLink( client1, s1, bw=0.24 )
+        self.addLink( server1, s1, bw=0.24 )
 
-        self.addLink( client2, s2 )
-        self.addLink( server2, s2 )
+        self.addLink( client2, s2, bw=0.24 )
+        self.addLink( server2, s2, bw=0.24 )
 
-        self.addLink( client3, s3 )
-        self.addLink( server3, s3 )
+        self.addLink( client3, s3, bw=0.24 )
+        self.addLink( server3, s3, bw=0.24 )
 
         
-        self.addLink( s1, s2 )
-        self.addLink( s2, s3 )
-        self.addLink( s3, s1 )
+        self.addLink( s1, s2, bw=0.24 )
+        self.addLink( s2, s3, bw=0.24 )
+        self.addLink( s3, s1, bw=0.24 )
 
 topos = { 'mytopo': ( lambda: MyTopo() ) }
