@@ -43,6 +43,8 @@ class MyTopo( Topo ):
         self.addLink( s2, s3, bw=0.24 )
         self.addLink( s3, s1, bw=0.24 )
 
+topos = { 'mytopo': ( lambda: MyTopo() ) }
+
 def createTopo():
     topo = MyTopo()
     net = Mininet( topo=topo,host=CPULimitedHost, link=TCLink )
