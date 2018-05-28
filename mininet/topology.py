@@ -2,8 +2,9 @@
 from mininet.topo import Topo
 from mininet.net import Mininet
 from mininet.node import CPULimitedHost
-from mininet.link import TCLink
+from mininet.link import TCIntf
 from mininet.log import setLogLevel
+from mininet.util import custom
 
 class MyTopo( Topo ):
     "Simple topology example."
@@ -29,25 +30,27 @@ class MyTopo( Topo ):
         server3 = self.addHost('server3', ip='3.3.3.2/30',defaultRoute='via 3.3.3.1' )
         # Add links
         # 30Kbytes = 0.24 Mbits
-        self.addLink( client1, s1, bw=0.24 )
-        self.addLink( server1, s1, bw=0.24 )
+        self.addLink( client1, s1 )
+        self.addLink( server1, s1 )
 
-        self.addLink( client2, s2, bw=0.24 )
-        self.addLink( server2, s2, bw=0.24 )
+        self.addLink( client2, s2 )
+        self.addLink( server2, s2 )
 
-        self.addLink( client3, s3, bw=0.24 )
-        self.addLink( server3, s3, bw=0.24 )
+        self.addLink( client3, s3 )
+        self.addLink( server3, s3 )
 
         
-        self.addLink( s1, s2, bw=0.24 )
-        self.addLink( s2, s3, bw=0.24 )
-        self.addLink( s3, s1, bw=0.24 )
+        self.addLink( s1, s2 )
+        self.addLink( s2, s3 )
+        self.addLink( s3, s1 )
 
 topos = { 'mytopo': ( lambda: MyTopo() ) }
 
 def createTopo():
+    intf = custom(TCIntf, bw='30k')
     topo = MyTopo()
-    net = Mininet( topo=topo,host=CPULimitedHost, link=TCLink )
+
+    net = Mininet( topo=topo,intf=intf,host=CPULimitedHost )
     net.start()
 
 if __name__ == '__main__':
