@@ -1,10 +1,13 @@
-
-from mininet.topo import Topo
-from mininet.net import Mininet
 from mininet.node import CPULimitedHost
-from mininet.link import TCIntf
-from mininet.log import setLogLevel
+from mininet.topo import Topo
+from mininet.link import Link
+from mininet.net import Mininet
+from mininet.log import setLogLevel, info
+from mininet.node import RemoteController
+from mininet.cli import CLI
+from mininet.link import TCLink
 from mininet.util import custom
+from mininet.link import TCIntf
 
 class MyTopo( Topo ):
     "Simple topology example."
@@ -15,19 +18,19 @@ class MyTopo( Topo ):
         # Initialize topology
         Topo.__init__( self )
 
-        s1 = self.addSwitch('s1', protocols='OpenFlow13')
-        s2 = self.addSwitch('s2', protocols='OpenFlow13')
-        s3 = self.addSwitch('s3', protocols='OpenFlow13')
+        s1 = self.addSwitch('s1', protocols='OpenFlow13', dpid="0000000000000001", mac= '01:00:00:00:00:00')
+        s2 = self.addSwitch('s2', protocols='OpenFlow13', dpid="0000000000000002", mac= '02:00:00:00:00:00')
+        s3 = self.addSwitch('s3', protocols='OpenFlow13', dpid="0000000000000003", mac= '03:00:00:00:00:00')
 
         
-        client1 = self.addHost('client1', ip='1.1.1.3/30',defaultRoute='via 1.1.1.1' )
-        client2 = self.addHost('client2', ip='2.2.2.3/30',defaultRoute='via 2.2.2.1' )
-        client3 = self.addHost('client3', ip='3.3.3.3/30',defaultRoute='via 3.3.3.1' )
+        client1 = self.addHost('client1', mac= '00:00:00:00:01:01')
+        client2 = self.addHost('client2', mac= '00:00:00:00:01:02')
+        client3 = self.addHost('client3', mac= '00:00:00:00:01:03')
 
         
-        server1 = self.addHost('server1', ip='1.1.1.2/30',defaultRoute='via 1.1.1.1' )
-        server2 = self.addHost('server2', ip='2.2.2.2/30',defaultRoute='via 2.2.2.1' )
-        server3 = self.addHost('server3', ip='3.3.3.2/30',defaultRoute='via 3.3.3.1' )
+        server1 = self.addHost('server1', mac= '00:00:00:00:02:01')
+        server2 = self.addHost('server2', mac= '00:00:00:00:02:02')
+        server3 = self.addHost('server3', mac= '00:00:00:00:02:03')
         # Add links
         # 30Kbytes = 0.24 Mbits
         self.addLink( client1, s1 )
@@ -44,15 +47,19 @@ class MyTopo( Topo ):
         self.addLink( s2, s3 )
         self.addLink( s3, s1 )
 
-topos = { 'mytopo': ( lambda: MyTopo() ) }
 
-def createTopo():
-    intf = custom(TCIntf, bw='30k')
-    topo = MyTopo()
-
-    net = Mininet( topo=topo,intf=intf,host=CPULimitedHost )
+def run():
+    c = RemoteController('c', '0.0.0.0', 6633)
+    intf = custom(TCIntf, bw=30)
+    net = Mininet(topo=MyTopo(), intf=intf, host=CPULimitedHost, controller=None)
+    net.addController(c)
     net.start()
 
+    # installStaticFlows( net )
+    CLI(net)
+    net.stop()
+
+# if the script is run directly (sudo custom/optical.py):
 if __name__ == '__main__':
     setLogLevel('info')
-    createTopo()
+    run()
