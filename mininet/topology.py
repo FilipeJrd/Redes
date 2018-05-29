@@ -33,24 +33,24 @@ class MyTopo( Topo ):
         server3 = self.addHost('server3', mac= '00:00:00:00:02:03')
         # Add links
         # 30Kbytes = 0.24 Mbits
-        self.addLink( client1, s1 )
-        self.addLink( server1, s1 )
+        self.addLink( client1, s1, port2=1 )
+        self.addLink( server1, s1, port2=2 )
 
-        self.addLink( client2, s2 )
-        self.addLink( server2, s2 )
+        self.addLink( client2, s2, port2=1 )
+        self.addLink( server2, s2, port2=2 )
 
-        self.addLink( client3, s3 )
-        self.addLink( server3, s3 )
+        self.addLink( client3, s3, port2=1 )
+        self.addLink( server3, s3, port2=2 )
 
         
-        self.addLink( s1, s2 )
-        self.addLink( s2, s3 )
-        self.addLink( s3, s1 )
+        self.addLink( s1, s2, port1=3, port2=4)
+        self.addLink( s2, s3, port1=3, port2=4 )
+        #self.addLink( s3, s1, port1=3, port2=4 )
 
 
 def run():
     c = RemoteController('c', '0.0.0.0', 6633)
-    intf = custom(TCIntf, bw=30)
+    intf = custom(TCIntf, bw=0.24)
     net = Mininet(topo=MyTopo(), intf=intf, host=CPULimitedHost, controller=None)
     net.addController(c)
     net.start()
