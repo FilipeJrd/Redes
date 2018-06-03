@@ -47,17 +47,15 @@ class L2Switch(app_manager.RyuApp):
             out_port = ofproto.OFPP_FLOOD
 
         actions = [parser.OFPActionOutput(out_port)]
-        if not is_flow_allowed(src, dst):
-            print("{} - {} is NOT authorized for communication".format(src, dst))
-            return
+        if is_flow_allowed(src, dst):
+            print("{} - {} is authorized for communication".format(src, dst))
+            # add flow to avoid further triggering of this event.
+            if out_port != ofproto.OFPP_FLOOD:
+                self.add_flow(datapath, msg.in_port, dst, src, actions)
 
-        # add flow to avoid further triggering of this event.
-        if out_port != ofproto.OFPP_FLOOD:
-            self.add_flow(datapath, msg.in_port, dst, src, actions)
-
-        out = parser.OFPPacketOut(datapath=datapath, buffer_id=msg.buffer_id,
-                                  in_port=in_port, actions=actions)
-        datapath.send_msg(out)
+            out = parser.OFPPacketOut(datapath=datapath, buffer_id=msg.buffer_id,
+                                    in_port=in_port, actions=actions)
+            datapath.send_msg(out)
     
     def add_flow(self, datapath, in_port, dst, src, actions):
         ofproto = datapath.ofproto
