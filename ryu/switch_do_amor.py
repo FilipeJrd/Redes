@@ -9,7 +9,6 @@ from ryu.lib.packet import ethernet
 from ryu.lib.packet import ether_types
 from ryu.ofproto import ofproto_v1_3
 
-
 class L2Switch(app_manager.RyuApp):
     OFP_VERSIONS = [ofproto_v1_3.OFP_VERSION]
     _CONTEXTS = {'stplib': stplib.Stp}
@@ -47,16 +46,10 @@ class L2Switch(app_manager.RyuApp):
         else:
             out_port = ofproto.OFPP_FLOOD
 
-        # allowed packet flows
-        switch1_switch2 = (src.startswith('01') and dst.startswith('02'))
-        switch2_switch3 = (src.startswith('02') and dst.startswith('03'))
-        switch3_switch1 = (src.startswith('03') and dst.startswith('01'))
-
-        # defines the action (drop packets if src-dst is not authorized).
         actions = [parser.OFPActionOutput(out_port)]
-        if not (switch1_switch2 or switch2_switch3 or switch3_switch1):
+        if not is_flow_allowed(src, dst):
             print("{} - {} is NOT authorized for communication".format(src, dst))
-            actions = []
+            return
 
         # add flow to avoid further triggering of this event.
         if out_port != ofproto.OFPP_FLOOD:
@@ -84,3 +77,10 @@ class L2Switch(app_manager.RyuApp):
             priority=ofproto.OFP_DEFAULT_PRIORITY,
             flags=ofproto.OFPFF_SEND_FLOW_REM, actions=actions)
         datapath.send_msg(mod)
+
+def is_flow_allowed(src, dst):
+    return ((src == "00:00:00:00:02:01" and dst == "00:00:00:00:02:02") or
+        (src == "00:00:00:00:02:02" and dst == "00:00:00:00:02:03") or
+        (src == "00:00:00:00:02:03" and dst == "00:00:00:00:02:01") or
+        (src.startswith('00:00:00:00:01') and dst.startswith('00:00:00:00:01')) or
+        (dst.startswith('ff')))

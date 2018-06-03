@@ -27,7 +27,6 @@ class MyTopo( Topo ):
         client2 = self.addHost('client2', mac= '00:00:00:00:01:02')
         client3 = self.addHost('client3', mac= '00:00:00:00:01:03')
 
-        
         server1 = self.addHost('server1', mac= '00:00:00:00:02:01')
         server2 = self.addHost('server2', mac= '00:00:00:00:02:02')
         server3 = self.addHost('server3', mac= '00:00:00:00:02:03')
