@@ -44,7 +44,7 @@ class MyTopo( Topo ):
         
         self.addLink( s1, s2, port1=3, port2=4)
         self.addLink( s2, s3, port1=3, port2=4 )
-        #self.addLink( s3, s1, port1=3, port2=4 )
+        self.addLink( s3, s1, port1=3, port2=4 )
 
 
 def run():
