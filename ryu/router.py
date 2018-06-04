@@ -987,15 +987,27 @@ class VlanRouter(object):
         dstip = ip_addr_ntoa(dst_ip)
         rt_ports = self.address_data.get_default_gw()
 
+        if src_ip == dst_ip:
             # GARP -> packet forward (normal)
-            # output = self.ofctl.dp.ofproto.OFPP_NORMAL
-            # self.ofctl.send_packet_out(in_port, output, msg.data)
+            output = self.ofctl.dp.ofproto.OFPP_NORMAL
+            self.ofctl.send_packet_out(in_port, output, msg.data)
 
-            # self.logger.info('Receive GARP from [%s].', srcip,
-            #                  extra=self.sw_id)
-            # self.logger.info('Send GARP (normal).', extra=self.sw_id)
+            self.logger.info('Receive GARP from [%s].', srcip,
+                             extra=self.sw_id)
+            self.logger.info('Send GARP (normal).', extra=self.sw_id)
 
-        if dst_ip  in rt_ports:
+        elif dst_ip not in rt_ports:
+            dst_addr = self.address_data.get_data(ip=dst_ip)
+            if (dst_addr is not None and
+                    src_addr.address_id == dst_addr.address_id):
+                # ARP from internal host -> packet forward (normal)
+                output = self.ofctl.dp.ofproto.OFPP_NORMAL
+                self.ofctl.send_packet_out(in_port, output, msg.data)
+
+                self.logger.info('Receive ARP from an internal host [%s].',
+                                 srcip, extra=self.sw_id)
+                self.logger.info('Send ARP (normal)', extra=self.sw_id)
+        else:
             if header_list[ARP].opcode == arp.ARP_REQUEST:
                 # ARP request to router port -> send ARP reply
                 src_mac = self.port_data[in_port].mac
