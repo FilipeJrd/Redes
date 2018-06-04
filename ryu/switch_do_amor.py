@@ -35,7 +35,7 @@ class L2Switch(app_manager.RyuApp):
         dpid = datapath.id
         self.mac_to_port.setdefault(dpid, {})
 
-        self.logger.info("packet in %s %s %s %s", datapath, src, dst, in_port)
+        self.logger.info("packet in %s %s %s %s", dpid, src, dst, in_port)
 
         # update mac-to-port table to avoid another packet flood.
         self.mac_to_port[dpid][src] = in_port
@@ -51,7 +51,7 @@ class L2Switch(app_manager.RyuApp):
             print("{} - {} is authorized for communication".format(src, dst))
             # add flow to avoid further triggering of this event.
             if out_port != ofproto.OFPP_FLOOD:
-                self.add_flow(datapath, msg.in_port, dst, src, actions)
+                self.add_flow(datapath, in_port, dst, src, actions)
 
             out = parser.OFPPacketOut(datapath=datapath, buffer_id=msg.buffer_id,
                                     in_port=in_port, actions=actions)
@@ -60,9 +60,8 @@ class L2Switch(app_manager.RyuApp):
     def add_flow(self, datapath, in_port, dst, src, actions):
         ofproto = datapath.ofproto
 
-        wildcards = ofproto_v1_3.OFPFW_ALL
-        wildcards &= ~ofproto_v1_3.OFPFW_IN_PORT
-        wildcards &= ~ofproto_v1_3.OFPFW_DL_DST
+        wildcards = ofproto_v1_3.OFPP_ALL
+        wildcards &= ~ofproto_v1_3.OFPP_IN_PORT
 
         match = datapath.ofproto_parser.OFPMatch(wildcards=wildcards,
                                                  in_port=in_port,
